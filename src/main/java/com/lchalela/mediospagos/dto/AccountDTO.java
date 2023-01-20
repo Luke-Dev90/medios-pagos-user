@@ -1,4 +1,4 @@
-package com.lchalela.mediospagos.users.dto;
+package com.lchalela.mediospagos.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,5 +13,6 @@ public class AccountDTO {
     private String typeAccount;
     private String cbu;
     private String alias;
+    private Long idUser;
     private List<TransactionsDTO> transactionsDTO;
 }

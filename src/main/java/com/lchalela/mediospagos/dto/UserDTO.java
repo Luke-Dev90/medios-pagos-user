@@ -1,4 +1,6 @@
-package com.lchalela.mediospagos.users.dto;
+package com.lchalela.mediospagos.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDTO {
     private String email;
-    private String password;
+    @JsonIgnore
+    private String pasword;
     private String name;
     private String lastName;
     private AccountDTO accountDTO;

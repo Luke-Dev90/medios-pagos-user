@@ -1,4 +1,4 @@
-package com.lchalela.mediospagos.users;
+package com.lchalela.mediospagos;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
