@@ -1,4 +1,4 @@
-package clients;
+package com.lchalela.mediospagos.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 
