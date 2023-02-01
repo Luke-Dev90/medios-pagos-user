@@ -7,9 +7,8 @@ import com.lchalela.mediospagos.dto.UserRegisterDTO;
 import java.util.List;
 
 public interface UserService {
-    User getUserByID(Long id);
+	UserDTO getUserByID(Long id);
     List<UserDTO> getAllUsers();
     User updateUser(UserDTO userDTO, Long id);
-
     UserDTO createUser(UserRegisterDTO user);
 }

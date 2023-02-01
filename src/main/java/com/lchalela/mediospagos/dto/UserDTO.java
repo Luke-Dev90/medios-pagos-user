@@ -1,5 +1,7 @@
 package com.lchalela.mediospagos.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -15,5 +17,5 @@ public class UserDTO {
     private String pasword;
     private String name;
     private String lastName;
-    private AccountDTO accountDTO;
+    private List<AccountDTO> accountDTO;
 }

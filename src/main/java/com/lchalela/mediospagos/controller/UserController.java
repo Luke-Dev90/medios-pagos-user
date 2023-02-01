@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -24,8 +26,13 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id){
+    	return new ResponseEntity<>(this.userService.getUserByID(id),HttpStatus.OK);
+    }
+    
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody UserRegisterDTO user){
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRegisterDTO user){
         return new ResponseEntity<>(this.userService.createUser(user) , HttpStatus.CREATED);
     }
 }

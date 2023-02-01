@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,5 +37,5 @@ public class User {
     private String lastName;
     
     @Transient
-    private AccountDTO accountDTO;
+    private List<AccountDTO> accountDTO;
 }

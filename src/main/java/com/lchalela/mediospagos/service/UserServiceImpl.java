@@ -1,33 +1,44 @@
 package com.lchalela.mediospagos.service;
 
+import com.lchalela.mediospagos.clients.AccountRest;
+import com.lchalela.mediospagos.dto.AccountCreateDTO;
 import com.lchalela.mediospagos.dto.AccountDTO;
 import com.lchalela.mediospagos.dto.UserDTO;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
 import com.lchalela.mediospagos.mapper.UserMapper;
 import com.lchalela.mediospagos.model.User;
 import com.lchalela.mediospagos.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 @Service
 public class UserServiceImpl implements UserService{
 
 	private UserRepository userRepository;
     private UserMapper userMapper;
+    private AccountRest accountRest;
     
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,AccountRest accountRest) {
     	this.userRepository = userRepository;
     	this.userMapper = userMapper;
+    	this.accountRest = accountRest;
     }
     
     @Override
-    public User getUserByID(Long id) {
-        return null;
+    public UserDTO getUserByID(Long id) {
+    	
+    	User user = this.userRepository.findById(id)
+    			.orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    	
+    	List<AccountDTO> accountDto = this.accountRest.getAccountByUserId( user.getId() );
+    	user.setAccountDTO(accountDto);
+    	
+        return this.userMapper.userToUserDTO(user);
     }
 
     @Override
@@ -43,21 +54,18 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDTO createUser(UserRegisterDTO userDto)
     {
-        // 1 EL user dto Convertirlo en Entity user  y 2 Salvar el usuario en DB
     	User userSave = this.userRepository.save( this.userMapper.userRegisterToUser(userDto));
     	
-    	// 3 crear una nueva cuenta para usuario
-    	AccountDTO account = new AccountDTO();
-    	account.setAlias( userSave.getLastName().concat(".alias") );
-    	account.setCbu( UUID.randomUUID().toString() );
-    	account.setIdUser( userSave.getId());
-    	account.setTypeAccount("Caja Ahorros en pesos");
-    	account.setTransactionsDTO( null );
+    	AccountCreateDTO account = new AccountCreateDTO();	
     	
-    	userSave.setAccountDTO(account);
-    	// 4 Enviarla y persistirla
-    	// TODO: feign client 
-
+    	account.setUserId( userSave.getId());
+    	account.setLastName( userSave.getLastName());
+    	account.setName(userSave.getName());
+    	account.setTypeAccount("Caja de ahorro en Pesos");
+    	
+    	List<AccountDTO> accountDTO = this.accountRest.createAccount(account);
+    	
+    	userSave.setAccountDTO(accountDTO);
         return this.userMapper.userToUserDTO(userSave);
     }
 }
