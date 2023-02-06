@@ -1,14 +1,14 @@
 package com.lchalela.mediospagos.service;
 
-import com.lchalela.mediospagos.model.User;
 import com.lchalela.mediospagos.dto.UserDTO;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
+import com.lchalela.mediospagos.dto.UserUpdateDTO;
 
 import java.util.List;
 
 public interface UserService {
-	UserDTO getUserByID(Long id);
+	UserDTO getUserByID(Long id)  throws Exception;
     List<UserDTO> getAllUsers();
-    User updateUser(UserDTO userDTO, Long id);
-    UserDTO createUser(UserRegisterDTO user);
+    void updateUser(UserUpdateDTO userDTO, Long id)  throws Exception;
+    UserDTO createUser(UserRegisterDTO user) throws Exception;
 }
