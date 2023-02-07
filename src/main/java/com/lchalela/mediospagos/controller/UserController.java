@@ -2,6 +2,8 @@ package com.lchalela.mediospagos.controller;
 
 import com.lchalela.mediospagos.dto.UserDTO;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
+import com.lchalela.mediospagos.dto.UserUpdateEmailDTO;
+import com.lchalela.mediospagos.dto.UserUpdatePasswordDTO;
 import com.lchalela.mediospagos.service.UserService;
 
 import org.slf4j.Logger;
@@ -40,5 +42,19 @@ public class UserController {
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRegisterDTO user) throws Exception{
     	logger.info("Init request post create user");
         return new ResponseEntity<>(this.userService.createUser(user) , HttpStatus.CREATED);
+    }
+    
+    @PutMapping("update/email/{id}")
+    public ResponseEntity<?> updateEmail(@Valid @RequestBody UserUpdateEmailDTO userDto, @PathVariable Long id) throws Exception{
+    	logger.info("init request update email user");
+    	this.userService.updateEmailUser(userDto, id);
+    	return new ResponseEntity<>( "Email updated" ,HttpStatus.OK);
+    }
+    
+    @PutMapping("update/password/{id}")
+    public ResponseEntity<?> updateEmail(@Valid @RequestBody UserUpdatePasswordDTO userDto,@PathVariable Long id) throws Exception{
+    	logger.info("init request update email user");
+    	this.userService.updatePasswordUser(userDto, id);
+    	return new ResponseEntity<>( "password updated" ,HttpStatus.OK);
     }
 }

@@ -1,5 +1,7 @@
 package com.lchalela.mediospagos.exception;
 
+import java.net.ConnectException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -35,4 +38,32 @@ public class ApiHandlerException extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler({UserNotFoundException.class})
+	public ResponseEntity<?> handleUserNotFound( RuntimeException re){
+		response.clear();
+		response.put("timestamp", LocalDateTime.now() );
+		logger.error(re.getMessage().concat(", status code: " ).concat( Integer.toString(HttpStatus.NOT_FOUND.value())));
+		response.put("error", re.getMessage());
+		response.put("status code", HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler({ConnectException.class})
+	public ResponseEntity<Object> handleConnectionException(RuntimeException re){
+		response.clear();
+		response.put("timestamp",LocalDateTime.now());
+		logger.error(re.getMessage().concat(", status code: " ).concat( Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+		response.put("error", re.getMessage());
+		response.put("status code", HttpStatus.INTERNAL_SERVER_ERROR.value());
+		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler({PasswordInvalidException.class})
+	public ResponseEntity<Object> handlePasswordIvalidException(RuntimeException re){
+		response.clear();
+		response.put("error", re.getMessage() );
+		response.put("status code", HttpStatus.BAD_REQUEST.value());
+		response.put("timestamp", LocalDateTime.now());
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
 }
