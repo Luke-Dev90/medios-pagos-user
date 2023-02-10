@@ -12,7 +12,7 @@ import lombok.Data;
 public class UserRegisterDTO {
 	@Email
 	private String email;
-	@Size(min=8)
+	@Size(min=8,max=8)
 	@NotBlank
 	private String password;
 	@NotBlank
