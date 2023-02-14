@@ -18,7 +18,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/v1")
 public class UserController {
 
     @Autowired

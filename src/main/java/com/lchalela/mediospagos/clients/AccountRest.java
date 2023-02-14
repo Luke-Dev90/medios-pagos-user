@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.lchalela.mediospagos.dto.AccountCreateDTO;
 import com.lchalela.mediospagos.dto.AccountDTO;
 
-@FeignClient(name = "account-service", url = "localhost:8083")
+@FeignClient(name = "account-service")
 public interface AccountRest {
-	@PostMapping("/account/create")
+	@PostMapping("/api/v1/create")
 	public List<AccountDTO> createAccount(@RequestBody AccountCreateDTO accountCreateDTO);
 	
-	@GetMapping("/account/{id}")
+	@GetMapping("/api/v1/{id}")
 	public List<AccountDTO> getAccountByUserId(@PathVariable Long id);
 }
