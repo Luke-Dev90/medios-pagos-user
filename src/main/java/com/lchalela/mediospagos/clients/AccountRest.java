@@ -13,9 +13,9 @@ import com.lchalela.mediospagos.dto.AccountDTO;
 
 @FeignClient(name = "account-service")
 public interface AccountRest {
-	@PostMapping("/api/v1/create")
+	@PostMapping("/v1/create")
 	public List<AccountDTO> createAccount(@RequestBody AccountCreateDTO accountCreateDTO);
 	
-	@GetMapping("/api/v1/{id}")
+	@GetMapping("/v1/{id}")
 	public List<AccountDTO> getAccountByUserId(@PathVariable Long id);
 }
