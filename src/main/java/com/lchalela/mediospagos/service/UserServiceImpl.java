@@ -1,6 +1,7 @@
 package com.lchalela.mediospagos.service;
 
 import com.lchalela.mediospagos.clients.AccountRest;
+import com.lchalela.mediospagos.clients.PublisherRest;
 import com.lchalela.mediospagos.dto.AccountCreateDTO;
 import com.lchalela.mediospagos.dto.AccountDTO;
 import com.lchalela.mediospagos.dto.UserDTO;
@@ -30,15 +31,17 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	private UserMapper userMapper;
 	private AccountRest accountRest;
-	private Tracer trace;
 	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	private PublisherRest publisherRest;
+	private Tracer trace;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, 
-			AccountRest accountRest,Tracer trace) {
+	public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AccountRest accountRest,
+			PublisherRest publisherRest, Tracer trace) {
 		this.userRepository = userRepository;
 		this.userMapper = userMapper;
 		this.accountRest = accountRest;
+		this.publisherRest = publisherRest;
 		this.trace = trace;
 	}
 
@@ -47,8 +50,8 @@ public class UserServiceImpl implements UserService {
 		logger.info("init find user by id");
 
 		User user = this.userRepository.findById(id).orElseThrow(() -> {
-			
-			String error ="user not found" ;
+
+			String error = "user not found";
 			logger.error(error);
 			trace.currentSpan().tag("error", error);
 			return new UserNotFoundException(error);
@@ -92,7 +95,20 @@ public class UserServiceImpl implements UserService {
 		logger.info("request create new account and persist in the db  MS: account ");
 		List<AccountDTO> accountDTO = this.accountRest.createAccount(account);
 		userSave.setAccountDTO(accountDTO);
+		
+		
+		logger.info("set message email and sent email");
+		
+		String messageEmail = "User created: "
+				.concat(userSave.getEmail()
+				.concat(", your cbu is: ")
+				.concat( accountDTO.get(0).getCbu())
+				.concat(", your account is actived thank you and welcome"));
+		
+		trace.currentSpan().tag("Send-Email", messageEmail);
 
+		this.publisherRest.sendEmail(messageEmail);
+		
 		return this.userMapper.userToUserDTO(userSave);
 	}
 
@@ -104,7 +120,7 @@ public class UserServiceImpl implements UserService {
 			User user = this.userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 			this.userMapper.updatePasswordUser(userDTO, user);
 			this.userRepository.save(user);
-		}else {
+		} else {
 			String error = "Password are not equals";
 			logger.error(error);
 			trace.currentSpan().tag("error", error);
