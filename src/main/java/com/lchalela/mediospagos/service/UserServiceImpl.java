@@ -13,6 +13,8 @@ import com.lchalela.mediospagos.mapper.UserMapper;
 import com.lchalela.mediospagos.model.User;
 import com.lchalela.mediospagos.repository.UserRepository;
 
+import brave.Tracer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,16 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	private UserMapper userMapper;
 	private AccountRest accountRest;
+	private Tracer trace;
 	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AccountRest accountRest) {
+	public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, 
+			AccountRest accountRest,Tracer trace) {
 		this.userRepository = userRepository;
 		this.userMapper = userMapper;
 		this.accountRest = accountRest;
+		this.trace = trace;
 	}
 
 	@Override
@@ -42,8 +47,11 @@ public class UserServiceImpl implements UserService {
 		logger.info("init find user by id");
 
 		User user = this.userRepository.findById(id).orElseThrow(() -> {
-			logger.error("user not found");
-			return new UserNotFoundException("User not found");
+			
+			String error ="user not found" ;
+			logger.error(error);
+			trace.currentSpan().tag("error", error);
+			return new UserNotFoundException(error);
 		});
 
 		logger.info("Init request to ms account ");
@@ -97,7 +105,10 @@ public class UserServiceImpl implements UserService {
 			this.userMapper.updatePasswordUser(userDTO, user);
 			this.userRepository.save(user);
 		}else {
-			throw new PasswordInvalidException("Password are not equals");
+			String error = "Password are not equals";
+			logger.error(error);
+			trace.currentSpan().tag("error", error);
+			throw new PasswordInvalidException(error);
 		}
 	}
 }
