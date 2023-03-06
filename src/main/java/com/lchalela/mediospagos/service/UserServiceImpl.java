@@ -5,13 +5,16 @@ import com.lchalela.mediospagos.clients.PublisherRest;
 import com.lchalela.mediospagos.dto.AccountCreateDTO;
 import com.lchalela.mediospagos.dto.AccountDTO;
 import com.lchalela.mediospagos.dto.UserDTO;
+import com.lchalela.mediospagos.dto.UserDTOAuth;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
 import com.lchalela.mediospagos.dto.UserUpdateEmailDTO;
 import com.lchalela.mediospagos.dto.UserUpdatePasswordDTO;
 import com.lchalela.mediospagos.exception.PasswordInvalidException;
 import com.lchalela.mediospagos.exception.UserNotFoundException;
 import com.lchalela.mediospagos.mapper.UserMapper;
+import com.lchalela.mediospagos.model.Role;
 import com.lchalela.mediospagos.model.User;
+import com.lchalela.mediospagos.repository.RoleRepository;
 import com.lchalela.mediospagos.repository.UserRepository;
 
 import brave.Tracer;
@@ -19,6 +22,9 @@ import brave.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,16 +39,19 @@ public class UserServiceImpl implements UserService {
 	private AccountRest accountRest;
 	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	private PublisherRest publisherRest;
+	private RoleRepository roleRepository;
 	private Tracer trace;
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AccountRest accountRest,
-			PublisherRest publisherRest, Tracer trace) {
+			PublisherRest publisherRest, RoleRepository roleRepository, Tracer trace) {
 		this.userRepository = userRepository;
 		this.userMapper = userMapper;
 		this.accountRest = accountRest;
 		this.publisherRest = publisherRest;
+		this.roleRepository = roleRepository;
 		this.trace = trace;
+
 	}
 
 	@Override
@@ -81,9 +90,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO createUser(UserRegisterDTO userDto) throws ConnectException {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		logger.info("Init mapper userDto to user and persist");
-		User userSave = this.userRepository.save(this.userMapper.userRegisterToUser(userDto));
+		
+		Role role = this.roleRepository.findById(1L).get();
+		
+		userDto.setPassword( passwordEncoder.encode( userDto.getPassword() ));
+		User userSave = this.userMapper.userRegisterToUser(userDto);
+		
+		userSave.setRoles( List.of(role) );
+		
+		this.userRepository.save(userSave);
 
+		logger.info("Roles: " + userSave.getRoles());
 		logger.info("Add new account by default");
 		AccountCreateDTO account = new AccountCreateDTO();
 
@@ -126,5 +145,11 @@ public class UserServiceImpl implements UserService {
 			trace.currentSpan().tag("error", error);
 			throw new PasswordInvalidException(error);
 		}
+	}
+
+	@Override
+	public UserDTOAuth findByEmail(String email) {
+		UserDTOAuth userDto = this.userMapper.userToUserDTOAuth(this.userRepository.findByEmail(email));
+		return userDto;
 	}
 }

@@ -8,6 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.lchalela.mediospagos.dto.UserDTO;
+import com.lchalela.mediospagos.dto.UserDTOAuth;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
 import com.lchalela.mediospagos.dto.UserUpdateEmailDTO;
 import com.lchalela.mediospagos.dto.UserUpdatePasswordDTO;
@@ -19,7 +20,7 @@ public interface UserMapper {
 	public User userDtoToUser(UserDTO userDto);
 	public List<UserDTO> userListToDTO(List<User> users);
 	public User userRegisterToUser(UserRegisterDTO user);
-	
+	public UserDTOAuth userToUserDTOAuth(User user);
 	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 	void updateEmailUser(UserUpdateEmailDTO userDTO, @MappingTarget User user);
 	

@@ -1,6 +1,7 @@
 package com.lchalela.mediospagos.service;
 
 import com.lchalela.mediospagos.dto.UserDTO;
+import com.lchalela.mediospagos.dto.UserDTOAuth;
 import com.lchalela.mediospagos.dto.UserRegisterDTO;
 import com.lchalela.mediospagos.dto.UserUpdateEmailDTO;
 import com.lchalela.mediospagos.dto.UserUpdatePasswordDTO;
@@ -13,4 +14,5 @@ public interface UserService {
     void updateEmailUser(UserUpdateEmailDTO userDTO, Long id)  throws Exception;
     void updatePasswordUser(UserUpdatePasswordDTO userDTO, Long id);
     UserDTO createUser(UserRegisterDTO user) throws Exception;
+    UserDTOAuth findByEmail(String username);
 }

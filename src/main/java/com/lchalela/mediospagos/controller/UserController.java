@@ -40,6 +40,12 @@ public class UserController {
     	return new ResponseEntity<>(this.userService.getUserByID(id),HttpStatus.OK);
     }
     
+    @GetMapping("/findByEmail")
+    public ResponseEntity<?> findByEmail(@RequestParam String email){
+    	logger.info("Init find user by email");
+    	return new ResponseEntity<>(this.userService.findByEmail(email),HttpStatus.OK);
+    }
+    
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRegisterDTO user) throws Exception{
     	logger.info("Init request post create user");
