@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.Transient;
+
 
 @Data
 @AllArgsConstructor
@@ -19,5 +21,6 @@ public class AccountDTO {
 	private String alias;
 	private Long userId;
 	private Boolean isActived;
+	@Transient
 	private List<TransactionDTO> transactionDTO;
 }

@@ -17,14 +17,11 @@ import com.lchalela.mediospagos.model.User;
 import com.lchalela.mediospagos.repository.RoleRepository;
 import com.lchalela.mediospagos.repository.UserRepository;
 
-import brave.Tracer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +56,10 @@ public class UserServiceImpl implements UserService {
 		logger.info("init find user by id");
 
 		User user = this.userRepository.findById(id).orElseThrow(() -> {
-
 			String error = "user not found";
 			logger.error(error);
-			trace.currentSpan().tag("error", error);
+			// TODO: find the correct solution to test the trace
+			//trace.currentSpan().tag("error", error);
 			return new UserNotFoundException(error);
 		});
 
@@ -124,7 +121,8 @@ public class UserServiceImpl implements UserService {
 				.concat( accountDTO.get(0).getCbu())
 				.concat(", your account is actived thank you and welcome"));
 		
-		trace.currentSpan().tag("Send-Email", messageEmail);
+		// TODO: find the correct solution to test the trace
+		//trace.currentSpan().tag("Send-Email", messageEmail);
 
 		this.publisherRest.sendEmail(messageEmail);
 		
@@ -142,7 +140,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			String error = "Password are not equals";
 			logger.error(error);
-			trace.currentSpan().tag("error", error);
+			//trace.currentSpan().tag("error", error);
 			throw new PasswordInvalidException(error);
 		}
 	}

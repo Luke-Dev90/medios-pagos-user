@@ -28,10 +28,9 @@ public class UserController {
     private Logger logger = LoggerFactory.getLogger(UserController.class);
     
     @GetMapping("/all")
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<List<UserDTO>> getAll(){
     	logger.info("init request get all users");
-        List<UserDTO> users = this.userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -60,7 +59,7 @@ public class UserController {
     }
     
     @PutMapping("update/password/{id}")
-    public ResponseEntity<?> updateEmail(@Valid @RequestBody UserUpdatePasswordDTO userDto,@PathVariable Long id) throws Exception{
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody UserUpdatePasswordDTO userDto,@PathVariable Long id) throws Exception{
     	logger.info("init request update email user");
     	this.userService.updatePasswordUser(userDto, id);
     	return new ResponseEntity<>( "password updated" ,HttpStatus.OK);

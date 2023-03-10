@@ -1,7 +1,5 @@
 package com.lchalela.mediospagos.model;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,13 +10,12 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lchalela.mediospagos.dto.AccountDTO;
 
-
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "users")
 public class User {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +33,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     
+    @Column(name = "enabled")
     private Boolean enabled;
     
     @Transient

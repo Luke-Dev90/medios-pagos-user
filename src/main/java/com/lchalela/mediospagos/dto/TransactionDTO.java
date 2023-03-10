@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class TransactionDTO {
 	private String accountDestination;
 	private String accountOrigin;
